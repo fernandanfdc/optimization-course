@@ -1,0 +1,117 @@
+# -----------------------
+# Regressão Linear com Gradiente Descendente
+# -----------------------
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# -----------------------
+# Exercício 1 - warmUpExercise
+# -----------------------
+def warmUpExercise():
+    return np.identity(5)
+
+print("Running warmUpExercise...")
+print("5x5 Identity Matrix:")
+print(warmUpExercise())
+
+# -----------------------
+# Carregamento dos dados
+# -----------------------
+# Simulação dos dados do arquivo ex1data1.txt
+# Você pode substituir isso por: data = np.loadtxt('data/ex1data1.txt', delimiter=',')
+data = np.array([
+    [6.1101, 17.592],
+    [5.5277, 9.1302],
+    [8.5186, 13.662],
+    [7.0032, 11.854],
+    [5.8598, 6.8233],
+    [8.3829, 11.886],
+    [7.4764, 4.3483],
+    [8.5781, 12.0],
+    [6.4862, 6.5987],
+    [5.0546, 3.8166]
+])
+
+X = data[:, 0]  # População (x)
+y = data[:, 1]  # Lucro (y)
+m = len(y)      # Número de exemplos
+
+# -----------------------
+# Plotar dados
+# -----------------------
+def plotData(X, y):
+    plt.scatter(X, y, marker='x', c='r')
+    plt.xlabel('Population size in 10,000s')
+    plt.ylabel('Profit in $10,000s')
+    plt.title('Profit vs Population')
+    plt.grid(True)
+    plt.show()
+
+plotData(X, y)
+
+# -----------------------
+# Função de custo
+# -----------------------
+def computeCost(X, y, theta):
+    m = len(y)
+    predictions = X @ theta
+    errors = predictions - y
+    cost = (1 / (2 * m)) * np.sum(errors ** 2)
+    return cost
+
+# -----------------------
+# Gradiente descendente
+# -----------------------
+def gradientDescent(X, y, theta, alpha, iterations):
+    m = len(y)
+    J_history = []
+
+    for _ in range(iterations):
+        predictions = X @ theta
+        errors = predictions - y
+        theta = theta - (alpha / m) * (X.T @ errors)
+        J_history.append(computeCost(X, y, theta))
+
+    return theta, J_history
+
+# -----------------------
+# Preparar dados para regressão linear
+# -----------------------
+X_with_intercept = np.column_stack((np.ones(m), X))  # Adiciona coluna de 1's
+theta = np.zeros(2)
+iterations = 1500
+alpha = 0.01
+
+# -----------------------
+# Executar o gradiente descendente
+# -----------------------
+theta, J_history = gradientDescent(X_with_intercept, y, theta, alpha, iterations)
+
+# -----------------------
+# Plotar convergência do custo
+# -----------------------
+plt.plot(J_history)
+plt.xlabel("Iteration")
+plt.ylabel("Cost J")
+plt.title("Convergence of Gradient Descent")
+plt.grid(True)
+plt.show()
+
+# -----------------------
+# Plotar linha de regressão sobre os dados
+# -----------------------
+plt.scatter(X, y, c='r', marker='x', label='Training data')
+plt.plot(X, X_with_intercept @ theta, label='Linear regression')
+plt.xlabel('Population size in 10,000s')
+plt.ylabel('Profit in $10,000s')
+plt.title('Linear Regression Fit')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# -----------------------
+# Mostrar os parâmetros finais
+# -----------------------
+print("Theta final encontrado:")
+print(theta)
