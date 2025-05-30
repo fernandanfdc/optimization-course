@@ -1,0 +1,60 @@
+#------------------------
+# Importar bibliotecas
+#------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.style.use('seaborn-v0_8-whitegrid')
+
+#------------------------
+# Definir a função e o gradiente
+#------------------------
+def f(X):
+    x, y = X
+    return (x - 47)**2 + (y - 0.1)**2 + 2
+
+def gradf(X):
+    x, y = X
+    return np.array([2 * (x - 47), 2 * (y - 0.1)])
+
+#------------------------
+# Plotar a função
+#------------------------
+x = np.linspace(30, 60, 100)
+y = np.linspace(-10, 10, 100)
+X_grid, Y_grid = np.meshgrid(x, y)
+Z = (X_grid - 47)**2 + (Y_grid - 0.1)**2 + 2
+
+plt.contour(X_grid, Y_grid, Z, 50)
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Contour plot of f(x, y)")
+plt.show()
+
+#------------------------
+# Executar o gradiente descendente
+#------------------------
+X = np.array([80.0, 20.0])  # ponto inicial
+alpha = 0.1  # taxa de aprendizado
+history = [X.copy()]
+
+for _ in range(100):
+    X = X - alpha * gradf(X)
+    history.append(X.copy())
+
+#------------------------
+# Plotar o caminho percorrido
+#------------------------
+history = np.array(history)
+plt.plot(history[:, 0], history[:, 1], marker='o')
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Gradient descent path")
+plt.grid(True)
+plt.show()
+
+#------------------------
+# Exibir resultado final
+#------------------------
+print("Minimum found at:", X)
+print("Function value at minimum:", f(X))
